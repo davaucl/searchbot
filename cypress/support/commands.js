@@ -25,15 +25,15 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('searchasyoutype', (searchvalue, item) => {
-    var wordbuilder = ""
-    var wordlenght = searchvalue.lenght
-    for(var letter = 0; letter < wordlenght; letter++){
-        wordbuilder = wordbuilder + searchvalue[letter];
-        cy.get('.magic-box-input input').type(wordbuilder, {delay: 500})
-        if(cy.get('.CoveoResultLink').contains(item)){
-          cy.get('.CoveoResultLink').contains(item).click();
-          break;
-        }
+    var wordlength = searchvalue.length;
+    for(var letter = 0; letter < wordlength; letter++){
+        cy.get('.magic-box-input input').type(searchvalue[letter], {delay: 500})
+        cy.get('body').then(($body) => {
+          if ($body.text().includes(item)) {
+            cy.get('body').type('{cmd}', {release: false})
+            cy.get('.CoveoResultLink').contains(item).click();
+          }
+        })
       }
       cy.get('.magic-box-input input').clear()
 });
