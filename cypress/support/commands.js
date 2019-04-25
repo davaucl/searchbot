@@ -24,16 +24,22 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+async function findResultWithSearchAsYouType(searchvalue, letterIndex, item) {
+  if (letterIndex >= searchvalue.length) {
+    return;
+  }
+  cy.get('.magic-box-input input').type(searchvalue[letterIndex], {delay: 500})
+  cy.get('body').then(($body) => {
+    if ($body.text().includes(item)) {
+      cy.get('body').type('{cmd}', {release: false})
+      cy.get('.CoveoResultLink').contains(item).click();
+    } else {
+      findResultWithSearchAsYouType(searchvalue, letterIndex + 1, item);
+    }
+  });
+}
+
 Cypress.Commands.add('searchasyoutype', (searchvalue, item) => {
-    var wordlength = searchvalue.length;
-    for(var letter = 0; letter < wordlength; letter++){
-        cy.get('.magic-box-input input').type(searchvalue[letter], {delay: 500})
-        cy.get('body').then(($body) => {
-          if ($body.text().includes(item)) {
-            cy.get('body').type('{cmd}', {release: false})
-            cy.get('.CoveoResultLink').contains(item).click();
-          }
-        })
-      }
-      cy.get('.magic-box-input input').clear()
+    findResultWithSearchAsYouType(searchvalue, 0, item);
+    cy.get('.magic-box-input input').clear()
 });
