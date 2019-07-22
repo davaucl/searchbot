@@ -1,6 +1,9 @@
 # searchbot
 Searchbot using cypress
 
+## Installing dependencies
+1. `npm install`
+
 ## Running your test
 
 1. `npm run cypress`
